@@ -317,7 +317,7 @@ elif selected_menu == "🛠️ Train SARIMA":
     model_options = ["Choose model"] + list(kandidat_model.keys())
     selected_model = st.selectbox("📌 Select SARIMA Model", options=model_options)
 
-    split_ratio = st.selectbox("🔀 Select Train-Test Split", options=["90:10", "80:20", "75:25", "70:30", "60:40"])
+    split_ratio = st.selectbox("🔀 Select Train-Test Split", options=["90:10", "80:20", "70:30"])
     split_map = {"90:10": 0.90, "80:20": 0.80, "70:30": 0.70}
 
     if selected_model != "Choose model" and st.button("🚀 Train and Forecast"):
