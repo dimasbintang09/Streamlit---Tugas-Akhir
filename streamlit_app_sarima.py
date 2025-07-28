@@ -169,16 +169,12 @@ elif selected_menu == "📈 ACF/PACF & ADF Test":
     split_option = st.selectbox("Pilih Rasio Data Training:", {
         "90:10": 1644,
         "80:20": 1462,
-        "75:25": 1370,
         "70:30": 1279,
-        "60:40": 1096
     }.keys())
     split_index = {
         "90:10": 1644,
         "80:20": 1462,
-        "75:25": 1370,
         "70:30": 1279,
-        "60:40": 1096
     }[split_option]
 
     # Apply differencing
@@ -249,16 +245,12 @@ elif selected_menu == "🔍 T Significance Test":
         split_option = st.selectbox("Pilih Rasio Data Training:", {
             "90:10": 1644,
             "80:20": 1462,
-            "75:25": 1370,
             "70:30": 1279,
-            "60:40": 1096
         }.keys())
         split_index = {
             "90:10": 1644,
             "80:20": 1462,
-            "75:25": 1370,
-            "70:30": 1279,
-            "60:40": 1096
+            "70:30": 1279
         }[split_option]
 
         # --- Differencing musiman ---
@@ -326,7 +318,7 @@ elif selected_menu == "🛠️ Train SARIMA":
     selected_model = st.selectbox("📌 Select SARIMA Model", options=model_options)
 
     split_ratio = st.selectbox("🔀 Select Train-Test Split", options=["90:10", "80:20", "75:25", "70:30", "60:40"])
-    split_map = {"90:10": 0.90, "80:20": 0.80, "75:25": 0.75, "70:30": 0.70, "60:40": 0.60}
+    split_map = {"90:10": 0.90, "80:20": 0.80, "70:30": 0.70}
 
     if selected_model != "Choose model" and st.button("🚀 Train and Forecast"):
         try:
