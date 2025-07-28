@@ -167,16 +167,18 @@ elif selected_menu == "📈 ACF/PACF & ADF Test":
     st.subheader("⚙️ Konfigurasi Analisis")
     diff_type = st.radio("Pilih Jenis Differencing:", ["Non-Seasonal (d)", "Seasonal (D)"])
     split_option = st.selectbox("Pilih Rasio Data Training:", {
-        "95:5": 1735,
         "90:10": 1644,
         "80:20": 1462,
-        "75:25": 1370
+        "75:25": 1370,
+        "70:30": 1279,
+        "60:40": 1096
     }.keys())
     split_index = {
-        "95:5": 1735,
         "90:10": 1644,
         "80:20": 1462,
-        "75:25": 1370
+        "75:25": 1370,
+        "70:30": 1279,
+        "60:40": 1096
     }[split_option]
 
     # Apply differencing
@@ -245,16 +247,18 @@ elif selected_menu == "🔍 T Significance Test":
         # --- Pilihan rasio pembagian data training ---
         st.subheader("⚙️ Konfigurasi Data Training")
         split_option = st.selectbox("Pilih Rasio Data Training:", {
-            "95:5": 1735,
             "90:10": 1644,
             "80:20": 1462,
-            "75:25": 1370
+            "75:25": 1370,
+            "70:30": 1279,
+            "60:40": 1096
         }.keys())
         split_index = {
-            "95:5": 1735,
             "90:10": 1644,
             "80:20": 1462,
-            "75:25": 1370
+            "75:25": 1370,
+            "70:30": 1279,
+            "60:40": 1096
         }[split_option]
 
         # --- Differencing musiman ---
@@ -321,8 +325,8 @@ elif selected_menu == "🛠️ Train SARIMA":
     model_options = ["Choose model"] + list(kandidat_model.keys())
     selected_model = st.selectbox("📌 Select SARIMA Model", options=model_options)
 
-    split_ratio = st.selectbox("🔀 Select Train-Test Split", options=["95:5", "90:10", "80:20", "75:25"])
-    split_map = {"95:5": 0.95, "90:10": 0.90, "80:20": 0.80, "75:25": 0.75}
+    split_ratio = st.selectbox("🔀 Select Train-Test Split", options=["90:10", "80:20", "75:25", "70:30", "60:40"])
+    split_map = {"90:10": 0.90, "80:20": 0.80, "75:25": 0.75, "70:30": 0.70, "60:40": 0.60}
 
     if selected_model != "Choose model" and st.button("🚀 Train and Forecast"):
         try:
@@ -363,7 +367,7 @@ elif selected_menu == "🛠️ Train SARIMA":
             ax.plot(forecast_mean.index, forecast_mean.values, label='Forecast', color='green', linewidth=2)
             ax.fill_between(forecast_mean.index, forecast_ci.iloc[:, 0], forecast_ci.iloc[:, 1],
                             color='green', alpha=0.3, label='Confidence Interval')
-            ax.axvline(x=y_test.index[0], color='red', linestyle='--', linewidth=2, label=' Start Forecasting')
+            ax.axvline(x=y_test.index[0], color='red', linestyle='--', linewidth=2, label='Start Forecasting')
 
             ax.set_title(f'SARIMA Forecast {selected_model} with {split_ratio} Data Split Until December 2025', fontsize=18)
             ax.set_xlabel('Date', fontsize=14)
@@ -379,13 +383,13 @@ elif selected_menu == "🛠️ Train SARIMA":
 
             st.pyplot(fig)
 
-            # === Evaluasi (pakai overlap forecast dengan test set) ===
+            # === Evaluasi ===
             forecast_for_eval = forecast_mean[:len(y_test)]
             mae = mean_absolute_error(y_test, forecast_for_eval)
             rmse = np.sqrt(mean_squared_error(y_test, forecast_for_eval))
             mse = mean_squared_error(y_test, forecast_for_eval)
-            #mape = np.mean(np.abs((y_test - forecast_for_eval) / y_test)) * 100
-
+            bic_value = model_fit.bic if not np.isnan(model_fit.bic) else "N/A"
+            
             st.subheader("📋 Evaluation")
             col1, col2, col3, col4, col5 = st.columns(5)
             with col1:
@@ -394,12 +398,10 @@ elif selected_menu == "🛠️ Train SARIMA":
                 st.metric("RMSE", f"{rmse:.2f}")
             with col3:
                 st.metric("MSE", f"{mse:.2f}")
-            #with col4:
-                #st.metric("MAPE", f"{mape:.2f}%")
             with col4:
                 st.metric("📊 AIC", f"{model_fit.aic:.2f}")
             with col5:
-                st.metric("📊 BIC", f"{model_fit.bic:.2f}")
+                st.metric("📊 BIC", f"{bic_value}" if isinstance(bic_value, str) else f"{bic_value:.2f}")
 
             st.session_state['model_fit'] = model_fit
             st.session_state['trained_model_name'] = selected_model
@@ -409,6 +411,8 @@ elif selected_menu == "🛠️ Train SARIMA":
             st.error(f"❌ Failed to train and evaluate the model {selected_model}: {e}")
     elif selected_model == "Choose model":
         st.info("📌 Please select the model first before training.")
+
+
 
 
 
